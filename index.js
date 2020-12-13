@@ -50,10 +50,31 @@ client.connect(err => {
     })
 
     app.post('/delete', (req, res) => {
-        todosCollection.deleteOne({"_id": ObjectId(req.body._id)})
+        todosCollection.deleteOne({ "_id": ObjectId(req.body._id) })
             .then(result => {
                 res.send(result.deletedCount > 0);
             })
+    });
+
+    app.post('/update', (req, res) => {
+        const taskName = req.body.taskName;
+        const taskDetails = req.body.taskDetails;
+        const email = req.body.email;
+        const id = req.body.id;
+
+        if (taskName && taskDetails && email) {
+            todosCollection.updateOne({_id: ObjectId(id)}, {
+                $set: {taskName: taskName, taskDetails: taskDetails, email: email}
+              })
+                .then(result => {
+                    res.send(result.modifiedCount > 0);
+                })
+        }
+        else {
+            res.send(false);
+        }
+
+
     });
 
 });
